@@ -526,6 +526,9 @@ case "${host}" in
 	newlib_cflags="${newlib_cflags} -DMISSING_SYSCALL_NAMES"
 	newlib_cflags="${newlib_cflags} -D_I386MACH_DISABLE_HW_INTERRUPTS"
 	;;
+  i[34567]86-*-run386)
+	sys_dir=run386
+	;;
   i[34567]86-*-sco*)
 	sys_dir=sysvi386
 	unix_dir=unix
@@ -771,6 +774,9 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
 	syscall_dir=syscalls	
 	newlib_cflags="${newlib_cflags} -DSMALL_DTOA -DSMALL_MEMORY"
 	;;	
+  i[34567]86-*-run386)
+	syscall_dir=syscalls
+	;;
   i[34567]86-*-sco*)
 	newlib_cflags="${newlib_cflags} -DSIGNAL_PROVIDED -DHAVE_FCNTL"
 	;;
