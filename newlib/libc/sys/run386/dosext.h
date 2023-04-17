@@ -115,3 +115,16 @@ static inline bool dosext_set_block(uint32_t pages, uint32_t *r) {
    }
    return !cf;
 }
+
+
+__attribute__((noreturn))
+static inline void dosext_end_process(uint8_t code) {
+
+   asm volatile (
+      "movb    $0x4c, %%ah\n\t"
+      "int     $0x21"
+      :
+      : "a" (code));
+
+   __builtin_unreachable();
+}

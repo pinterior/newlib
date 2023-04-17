@@ -36,13 +36,20 @@ _start:
 .Lresize_ok:
    movl     %ecx, __program_alloced
 
+   // init, fini
+   pushl    $__libc_fini_array
+   call     atexit
+   addl     $4, %esp
+   call     __libc_init_array
+
    pushl    $0
    pushl    $0
    pushl    $0
    call     main
+   addl     $12, %esp
 
-   movb     $0x4c, %ah
-   int      $0x21
+   pushl    %eax
+   call     exit
 
 .comm    __program_initial, 4, 4
 .comm    __program_size, 4, 4
