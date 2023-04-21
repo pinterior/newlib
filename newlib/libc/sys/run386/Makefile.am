@@ -5,7 +5,7 @@ AM_CCASFLAGS = $(INCLUDES)
 noinst_LIBRARIES = lib.a
 
 EXTRA_lib_a_SOURCES = crt0.S
-lib_a_SOURCES = _exit.c close.c fstat.c isatty.c lseek.c read.c sbrk.c write.c
+lib_a_SOURCES = _exit.c close.c fstat.c getpid.c gettimeofday.c isatty.c kill.c lseek.c read.c sbrk.c write.c
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)
 lib_a_CFLAGS = $(AM_CFLAGS)
 

@@ -4,6 +4,39 @@
 #include <stdint.h>
 
 
+static inline void dosext_get_date(uint16_t *year, uint8_t *month, uint8_t *date, uint8_t *dow) {
+   uint8_t al;
+   uint16_t cx, dx;
+
+   asm (
+      "movb    $0x2a, %%ah\n\t"
+      "int     $0x21"
+      : "=a" (al), "=c" (cx), "=d" (dx));
+
+   *year = cx;
+   *month = dx >> 8;
+   *date = dx;
+   *dow = al;
+}
+
+
+static inline void dosext_get_time(uint8_t *hour, uint8_t *minute, uint8_t *second, uint8_t *centisecond) {
+   uint16_t cx, dx;
+
+   asm (
+      "movb    $0x2c, %%ah\n\t"
+      "int     $0x21"
+      : "=c" (cx), "=d" (dx)
+      :
+      : "ah");
+
+   *hour = cx >> 8;
+   *minute = cx;
+   *second = dx >> 8;
+   *centisecond = dx;
+}
+
+
 static inline bool dosext_close_handle(uint16_t handle, uint16_t *r) {
    uint16_t result;
    bool cf;
