@@ -17,37 +17,52 @@ _start:
    andl     $3, %ecx
    rep stosb
 
+   // argc, argv, environ
+   addl     $0x24, %eax
+   movw     %ax, %fs
+   addl     $(0x2c - 0x24), %eax
+   movw     %ax, %gs
+   movl     %esp, %esi
+   subl     $12, %esp
+   pushl    %esp
+   movl     %fs:0x60, %edi
+   movl     %edi, %ecx
+   subl     %esi, %ecx
+   pushl    %ecx
+   pushl    %esi
+   call     __setup_arg_env
+   movl     %ds, %ecx
+   movw     %cx, %fs
+   movw     %cx, %gs
+   testl    %eax, %eax
+   jnz      .Larg_env_ok
+   movb     $127, %al
+   jmp      .Lexit
+.Larg_env_ok:
+   addl     %eax, %esi
+
    // setup heap
-   movl     %esp, %ecx
-   movl     %ecx, __program_initial
-   movl     %ecx, __program_size
-   addl     $0xffff, %ecx
-   andl     $0xffff0000, %ecx
-   movl     %ecx, %ebx
+   movl     %esi, __program_initial
+   movl     %esi, __program_size
+   addl     $0xffff, %esi
+   andl     $0xffff0000, %esi
+   movl     %esi, %ebx
    shrl     $12, %ebx
    movb     $0x4a, %ah
    int      $0x21
    jnc      .Lresize_ok
-   pushl    $0x24
-   popl     %es
-   movl     %es:0x60, %ecx
-   pushl    %ds
-   popl     %es
+   movl     %edi, %esi
 .Lresize_ok:
-   movl     %ecx, __program_alloced
+   movl     %esi, __program_alloced
 
    // init, fini
    pushl    $__libc_fini_array
    call     atexit
-   addl     $4, %esp
    call     __libc_init_array
 
-   pushl    $0
-   pushl    $0
-   pushl    $0
+   addl     $16, %esp
    call     main
-   addl     $12, %esp
-
+.Lexit:
    pushl    %eax
    call     exit
 
