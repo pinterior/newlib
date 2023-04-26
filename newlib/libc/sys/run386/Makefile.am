@@ -13,9 +13,12 @@ lib_a_SOURCES = \
     gettimeofday.c \
     isatty.c \
     kill.c \
+    link.c \
     lseek.c \
     read.c \
+    rename.c \
     sbrk.c \
+    unlink.c \
     write.c \
     premain.c
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)

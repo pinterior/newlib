@@ -775,6 +775,7 @@ newlib_cflags="${newlib_cflags} -DCLOCK_PROVIDED -DMALLOC_PROVIDED -DEXIT_PROVID
 	newlib_cflags="${newlib_cflags} -DSMALL_DTOA -DSMALL_MEMORY"
 	;;	
   i[34567]86-*-run386)
+	newlib_cflags="${newlib_cflags} -DHAVE_RENAME"
 	syscall_dir=syscalls
 	;;
   i[34567]86-*-sco*)

@@ -90,6 +90,23 @@ static inline bool dosext_write_handle(uint16_t handle, uint32_t count, const vo
 }
 
 
+static inline bool dosext_delete_entry(const char *filename, uint16_t *r) {
+   uint16_t error;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x41, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (error)
+      : "d" (filename), "m" (*(const char (*)[])filename));
+
+   if (cf) {
+      *r = error;
+   }
+   return !cf;
+}
+
+
 static inline bool dosext_move_ptr(uint8_t origin, uint16_t handle, uint32_t offset, uint32_t *r) {
    uint16_t offset_hi, offset_lo, result_hi, result_lo;
    bool cf;
@@ -160,4 +177,22 @@ static inline void dosext_end_process(uint8_t code) {
       : "a" (code));
 
    __builtin_unreachable();
+}
+
+
+static inline bool dosext_rename_file(const char *first, const char *second, uint16_t *r) {
+   uint16_t error;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x56, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (error)
+      : "d" (first), "m" (*(const char (*)[])first),
+        "D" (second), "m" (*(const char (*)[])second));
+
+   if (cf) {
+      *r = error;
+   }
+   return !cf;
 }
