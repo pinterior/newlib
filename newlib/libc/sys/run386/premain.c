@@ -62,7 +62,7 @@ static inline size_t arg0_size(env_ptr e) {
       while (*p++);
       return p - e - 2;
    } else {
-      return 1;
+      return 0;
    }
 }
 
@@ -90,8 +90,11 @@ static bool setup_env(struct heap *heap, struct triple *triple, struct env_misc 
       p += n;
    }
    ++p;
-   a0size = arg0_size(p);
-   esize += a0size;
+   if (a0size = arg0_size(p)) {
+      esize += a0size;
+   } else {
+      esize += 2;
+   }
 
    size_t alloc_size = sizeof(char *) * (nenv + 1) + esize;
    void *alloced = alloc(heap, alloc_size);
@@ -106,7 +109,7 @@ static bool setup_env(struct heap *heap, struct triple *triple, struct env_misc 
    for (int i = 0; i < nenv; ++i) {
       ptrs[i] = buf;
       n = env_copy(buf, p);
-      if (__builtin_strncmp(cmdline_eq, buf, cmdline_eq_len) == 0) {
+      if (cmdline_eq_len < n && __builtin_memcmp(cmdline_eq, buf, cmdline_eq_len) == 0) {
          misc->cmdline = buf + cmdline_eq_len;
       }
       buf += n;
@@ -115,10 +118,11 @@ static bool setup_env(struct heap *heap, struct triple *triple, struct env_misc 
    ptrs[nenv] = 0;
    ++p;
 
-   if (a0size == 1) {
-      *buf = '\0';
-   } else {
+   if (a0size) {
       env_copy(buf, p + 2);
+   } else {
+      buf[0] = 'C';
+      buf[1] = '\0';
    }
 
    misc->arg0 = buf;
