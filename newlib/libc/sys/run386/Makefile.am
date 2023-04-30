@@ -8,6 +8,8 @@ EXTRA_lib_a_SOURCES = crt0.S
 lib_a_SOURCES = \
     _exit.c \
     close.c \
+    execve.c \
+    fork.c \
     fstat.c \
     getpid.c \
     gettimeofday.c \
@@ -19,7 +21,9 @@ lib_a_SOURCES = \
     read.c \
     rename.c \
     sbrk.c \
+    times.c \
     unlink.c \
+    wait.c \
     write.c \
     toerrno.c premain.c
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)
