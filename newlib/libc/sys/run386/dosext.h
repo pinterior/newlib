@@ -4,6 +4,9 @@
 #include <stdint.h>
 
 
+extern int dosext_to_errno(uint16_t err);
+
+
 static inline void dosext_get_date(uint16_t *year, uint8_t *month, uint8_t *date, uint8_t *dow) {
    uint8_t al;
    uint16_t cx, dx;
@@ -34,6 +37,25 @@ static inline void dosext_get_time(uint8_t *hour, uint8_t *minute, uint8_t *seco
    *minute = cx;
    *second = dx >> 8;
    *centisecond = dx;
+}
+
+
+static inline uint16_t dosext_open_handle(uint8_t mode, const char *filename, uint16_t *fd) {
+   uint16_t result;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x3d, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (result)
+      : "a" (mode), "d" (filename), "m" (*(const char (*)[])filename));
+
+   if (!cf) {
+      *fd = result;
+      return 0;
+   } else {
+      return result;
+   }
 }
 
 
@@ -195,4 +217,23 @@ static inline bool dosext_rename_file(const char *first, const char *second, uin
       *r = error;
    }
    return !cf;
+}
+
+
+static inline uint16_t dosext_create_new(uint16_t attr, const char *filename, uint16_t *fd) {
+   uint16_t result;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x5b, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (result)
+      : "c" (attr), "d" (filename), "m" (*(const char (*)[])filename));
+
+   if (!cf) {
+      *fd = result;
+      return 0;
+   } else {
+      return result;
+   }
 }

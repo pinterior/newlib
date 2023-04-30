@@ -15,12 +15,13 @@ lib_a_SOURCES = \
     kill.c \
     link.c \
     lseek.c \
+    open.c \
     read.c \
     rename.c \
     sbrk.c \
     unlink.c \
     write.c \
-    premain.c
+    toerrno.c premain.c
 lib_a_CCASFLAGS = $(AM_CCASFLAGS)
 lib_a_CFLAGS = $(AM_CFLAGS)
 
