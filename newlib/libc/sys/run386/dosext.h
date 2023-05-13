@@ -170,6 +170,21 @@ static inline bool dosext_ioctl_data_get(uint16_t handle, uint16_t *r) {
 }
 
 
+static inline bool dosext_xdup(uint16_t handle, uint16_t *r) {
+   uint16_t result;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x45, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (result)
+      : "b" (handle));
+
+   *r = result;
+   return !cf;
+}
+
+
 static inline bool dosext_set_block(uint32_t pages, uint32_t *r) {
    uint16_t error, avail;
    bool cf;
@@ -215,6 +230,26 @@ static inline bool dosext_rename_file(const char *first, const char *second, uin
 
    if (cf) {
       *r = error;
+   }
+   return !cf;
+}
+
+
+static inline bool dosext_get_date_time(uint16_t handle, uint16_t *err, uint16_t *ymd, uint16_t *hms) {
+   uint16_t error, time, date;
+   bool cf;
+
+   asm volatile (
+      "movw    $0x5700, %%ax\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (error), "=c" (time), "=d" (date)
+      : "b" (handle));
+
+   if (cf) {
+      *err = error;
+   } else {
+      *ymd = date;
+      *hms = time;
    }
    return !cf;
 }
