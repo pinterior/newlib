@@ -7,6 +7,16 @@
 extern int dosext_to_errno(uint16_t err);
 
 
+static inline void dosext_set_dta(void *buffer) {
+   asm volatile (
+      "movb    $0x1a, %%ah\n\t"
+      "int     $0x21"
+      :
+      : "d" (buffer)
+      : "ah");
+}
+
+
 static inline void dosext_get_date(uint16_t *year, uint8_t *month, uint8_t *date, uint8_t *dow) {
    uint8_t al;
    uint16_t cx, dx;
@@ -214,6 +224,24 @@ static inline void dosext_end_process(uint8_t code) {
       : "a" (code));
 
    __builtin_unreachable();
+}
+
+
+static inline bool dosext_find_first_file(const char *pathname, uint16_t attr, uint16_t *err) {
+   uint16_t error;
+   bool cf;
+
+   asm volatile (
+      "movb    $0x4e, %%ah\n\t"
+      "int     $0x21"
+      : "=@ccc" (cf), "=a" (error)
+      : "c" (attr), "d" (pathname)
+      : "memory");
+
+   if (cf) {
+      *err = error;
+   }
+   return !cf;
 }
 
 

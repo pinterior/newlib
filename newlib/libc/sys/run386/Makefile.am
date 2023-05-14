@@ -21,6 +21,7 @@ lib_a_SOURCES = \
     read.c \
     rename.c \
     sbrk.c \
+    stat.c \
     times.c \
     unlink.c \
     wait.c \
