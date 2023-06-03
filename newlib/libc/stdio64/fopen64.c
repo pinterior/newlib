@@ -103,8 +103,13 @@ _fopen64_r (struct _reent *ptr,
     _fseeko64_r (ptr, fp, 0, SEEK_END);
 
 #ifdef __SCLE
+#if defined(__MSDOS__)
+  if (!(oflags & O_BINARY))
+    fp->_flags |= __SCLE;
+#else
   if (__stextmode (fp->_file))
     fp->_flags |= __SCLE;
+#endif
 #endif
 
   fp->_flags |= __SL64;

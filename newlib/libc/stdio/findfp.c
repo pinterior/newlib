@@ -82,8 +82,12 @@ std (FILE *ptr,
 #endif
 
 #ifdef __SCLE
+#if defined(__MSDOS__)
+  ptr->_flags |= __SCLE;
+#else
   if (__stextmode (ptr->_file))
     ptr->_flags |= __SCLE;
+#endif
 #endif
 }
 

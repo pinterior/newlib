@@ -107,7 +107,7 @@ static char sccsid[] = "%W% (Berkeley) %G%";
 #include <stdio.h>
 #include <errno.h>
 #include <sys/lock.h>
-#ifdef __CYGWIN__
+#if defined(__CYGWIN__)  || defined(__MSDOS__)
 #include <fcntl.h>
 #endif
 #include "local.h"
@@ -151,8 +151,13 @@ _fopen_r (struct _reent *ptr,
     _fseek_r (ptr, fp, 0, SEEK_END);
 
 #ifdef __SCLE
+#if defined(__MSDOS__)
+  if (!(oflags & O_BINARY))
+    fp->_flags |= __SCLE;
+#else
   if (__stextmode (fp->_file))
     fp->_flags |= __SCLE;
+#endif
 #endif
 
   _newlib_flockfile_end (fp);

@@ -61,14 +61,14 @@ __swrite64 (struct _reent *ptr,
     (void) _lseek64_r (ptr, fp->_file, (_off64_t)0, SEEK_END);
   fp->_flags &= ~__SOFF;	/* in case O_APPEND mode is set */
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   if (fp->_flags & __SCLE)
     oldmode = setmode(fp->_file, O_BINARY);
 #endif
 
   w = _write_r (ptr, fp->_file, buf, n);
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   if (oldmode)
     setmode(fp->_file, oldmode);
 #endif

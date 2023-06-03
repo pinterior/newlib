@@ -23,8 +23,10 @@ extern "C" {
 #define	_FNONBLOCK	0x4000	/* non blocking I/O (POSIX style) */
 #define	_FNDELAY	_FNONBLOCK	/* non blocking I/O (4.2 style) */
 #define	_FNOCTTY	0x8000	/* don't assign a ctty on this open */
-#if defined (__CYGWIN__)
+#if defined (__CYGWIN__) || defined(__MSDOS__)
 #define	_FBINARY	0x10000
+#endif
+#if defined (__CYGWIN__)
 #define	_FTEXT		0x20000
 #endif
 #define	_FNOINHERIT	0x40000
@@ -69,6 +71,10 @@ extern "C" {
 
 #if __BSD_VISIBLE
 #define	O_DIRECT	_FDIRECT
+#endif
+
+#if defined (__MSDOS__)
+#define O_BINARY	_FBINARY
 #endif
 
 #if defined (__CYGWIN__)

@@ -38,7 +38,7 @@ __sread (struct _reent *ptr,
   register FILE *fp = (FILE *) cookie;
   register ssize_t ret;
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   int oldmode = 0;
   if (fp->_flags & __SCLE)
     oldmode = setmode (fp->_file, O_BINARY);
@@ -46,7 +46,7 @@ __sread (struct _reent *ptr,
 
   ret = _read_r (ptr, fp->_file, buf, n);
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   if (oldmode)
     setmode (fp->_file, oldmode);
 #endif
@@ -86,14 +86,14 @@ __swrite (struct _reent *ptr,
     _lseek_r (ptr, fp->_file, (_off_t) 0, SEEK_END);
   fp->_flags &= ~__SOFF;	/* in case O_APPEND mode is set */
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   if (fp->_flags & __SCLE)
     oldmode = setmode (fp->_file, O_BINARY);
 #endif
 
   w = _write_r (ptr, fp->_file, buf, n);
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
   if (oldmode)
     setmode (fp->_file, oldmode);
 #endif
@@ -130,7 +130,7 @@ __sclose (struct _reent *ptr,
   return _close_r (ptr, fp->_file);
 }
 
-#ifdef __SCLE
+#if defined(__SCLE) && !defined(__MSDOS__)
 int
 __stextmode (int fd)
 {

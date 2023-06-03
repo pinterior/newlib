@@ -106,6 +106,10 @@ _fdopen_r (struct _reent *ptr,
   fp->_close = __sclose;
 
 #ifdef __SCLE
+#if defined(__MSDOS__)
+  if (!(oflags & O_BINARY))
+    fp->_flags |= __SCLE;
+#else
   /* Explicit given mode results in explicit setting mode on fd */
   if (oflags & O_BINARY)
     setmode (fp->_file, O_BINARY);
@@ -113,6 +117,7 @@ _fdopen_r (struct _reent *ptr,
     setmode (fp->_file, O_TEXT);
   if (__stextmode (fp->_file))
     fp->_flags |= __SCLE;
+#endif
 #endif
 
   _newlib_flockfile_end (fp);

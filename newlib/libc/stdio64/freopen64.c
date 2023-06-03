@@ -161,12 +161,19 @@ _freopen64_r (struct _reent *ptr,
 #endif
 
 #ifdef __SCLE
+#if defined(__MSDOS__)
+      if (oflags & O_BINARY)
+	fp->_flags &= ~__SCLE;
+      else
+	fp->_flags |= __SCLE;
+#else
       /*
        * F_SETFL doesn't change textmode.  Don't mess with modes of ttys.
        */
       if (0 <= f && ! isatty (f)
 	  && setmode (f, oflags & (O_BINARY | O_TEXT)) == -1)
 	f = -1;
+#endif
 #endif
 
       if (f < 0)
